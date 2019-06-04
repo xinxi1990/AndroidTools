@@ -52,12 +52,16 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "dayjs": "^1.8.14",
     "electron-is": "^3.0.0",
     "element-ui": "^2.9.1",
+    "highcharts": "^7.1.1",
     "iview": "^3.4.2",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
+    "vue-highcharts": "^0.1.0",
     "vue-router": "^3.0.1",
+    "vue2-highcharts": "^1.2.5",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0"
   },

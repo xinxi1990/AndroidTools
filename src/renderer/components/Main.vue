@@ -7,13 +7,16 @@
           <Button type="primary"  @click="goLogPage()">LOG日志</Button>
       </div>
       <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
-          <Button type="primary" >屏幕截图</Button>
+          <Button type="primary"  @click="goScreenShotPage()">屏幕截图</Button>
       </div>
       <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
           <Button type="primary" >视频录制</Button>
       </div>
       <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
-          <Button type="primary" >性能数据</Button>
+          <Button type="primary"  @click="goDataPage()">性能数据</Button>
+      </div>
+      <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+          <Button type="primary" >Monkey测试</Button>
       </div>
    </div>
 </template>
@@ -31,6 +34,12 @@
             },
             goLogPage() {
                 this.$router.push('/log');
+            },
+            goScreenShotPage() {
+                this.$router.push('/screen');
+            },
+            goDataPage() {
+                this.$router.push('/data');
             },
          }
     }

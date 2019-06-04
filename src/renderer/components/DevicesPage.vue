@@ -25,7 +25,7 @@
     export default {
         name: "devicepage",
         data(){
-                   return {
+            return {
                 theme3: 'light',
                 devicesList: [],
                 model1: ''

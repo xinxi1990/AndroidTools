@@ -24,6 +24,16 @@ const routers = [
       name: 'log-page',
       component: require('@/components/LogPage.vue').default
     },
+    {
+      path: '/screen',
+      name: 'screen-page',
+      component: require('@/components/ScreenShotPage.vue').default
+    },
+    {
+      path: '/data',
+      name: 'data-page',
+      component: require('@/components/DataPage.vue').default
+    },
 
   ];
 

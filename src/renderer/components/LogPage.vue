@@ -95,7 +95,6 @@
 
                this.logcmd = 'adb logcat ' + this.logTag + ' -d'
                console.log(this.logcmd);
-
                exec(this.logcmd, {
                         encoding: 'utf8',
                         timeout: 0,
