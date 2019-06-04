@@ -4,6 +4,9 @@
           <Button type="primary"  @click="goDevicesPage()">设备连接</Button>
       </div>
       <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+          <Button type="primary"  @click="goScreenShowPage()">设备同屏</Button>
+      </div>
+      <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
           <Button type="primary"  @click="goLogPage()">LOG日志</Button>
       </div>
       <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
@@ -40,6 +43,9 @@
             },
             goDataPage() {
                 this.$router.push('/data');
+            },
+            goScreenShowPage() {
+                this.$router.push('/show');
             },
          }
     }

@@ -34,6 +34,11 @@ const routers = [
       name: 'data-page',
       component: require('@/components/DataPage.vue').default
     },
+    {
+      path: '/show',
+      name: 'screen-show-page',
+      component: require('@/components/ScreenShowPage.vue').default
+    },
 
   ];
 
