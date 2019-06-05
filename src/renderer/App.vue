@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'Android小工具'
+    name: 'Android工具箱'
   }
 </script>
 

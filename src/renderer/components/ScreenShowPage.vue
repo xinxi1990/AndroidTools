@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <p>实时屏幕:
-             <a href="http://localhost:9002">跳转屏幕展示</a>
-            <!--<span @click="openUrl">http://www.yunlauncher.com</span>-->
-        </p>
+    <div id="container" >
+        <h1>实时屏幕</h1>
+             <!--<a href="http://localhost:9002">跳转屏幕展示</a>-->
+         <iframe :key="this.url1" v-once :src="this.url1" frameborder="0" style="width:400px;height:700px"></iframe>
 	</div>
+
 </template>
 
 <script>
@@ -15,11 +15,13 @@
         name: "screen-show-page",
         data () {
             return {
-                imagePath: ''
+                imagePath: '',
+                url1:'http://localhost:9002'
             }
         },
         mounted() {
-            this.getScreenShow()
+            // this.getScreenShow()
+            this.url1 = 'http://localhost:9002'
         },
         methods:{
             openUrl () {
@@ -46,12 +48,6 @@
                 var imUrl = URL.createObjectURL(blob);
                 this.imagePath = imUrl;
                 console.log(this.imagePath)
-                // this.imagePath = 'data:image/png;base64,' + window.btoa(window.encodeURIComponent(data))
-                // console.log(this.imagePath)
-                // var staticPath = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
-                // console.log(staticPath)
-                // let imgUrl = 'data:image/jpeg;base64,' + btoa(String.fromCharCode(...new Uint8Array(stdout)))
-                // console.log(imgUrl)
                 })
             },
         }

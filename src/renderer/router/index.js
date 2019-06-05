@@ -12,7 +12,8 @@ const routers = [
         meta: {
             title: '首页'
         },
-        component: Main,
+        // component: Main,
+        component: require('@/components/DashboardPage.vue').default
     },
     {
       path: '/devices',
