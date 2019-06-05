@@ -10,17 +10,22 @@
                   <h2>LOG日志</h2>
                   <br>
                   <div>
-                      <Select v-model="selectBody.loglevel" style="width:200px" placeholder="下拉筛选">
+                      <Tag>APP包名</Tag>
+                      <Select v-model="packageName" style="width:200px" filterable multiple>
+                           <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                      </Select>  
+                      <Tag>日志等级</Tag>
+                      <Select v-model="selectBody.loglevel" style="width:100px" placeholder="下拉筛选">
                         <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                       </Select>
                       <Button type="primary"  @click="timerLogCat()">打印日志</Button>
                       <Button type="primary"  @click="stopLogCat()">停止打印</Button>
                   </div>
-                  <div style="padding-top: 20px;height: 600px">
-                      <textarea rows="20" cols="70" id="LogArea" disabled="true"></textarea>
+                  <div style="padding-top: 20px;">
+                      <textarea rows="20" cols="60" id="LogArea" disabled="true"></textarea>
                   </div>
             </div>
-            <div style="clear:both" align="center"></div>
+            <div style="clear:both" align="center"></div>  
         </div>
             <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>Monkey测试</h2>
@@ -43,7 +48,7 @@
             </div>    
             <div style="margin-bottom: 20px;margin-top:20px">
                 <Tag>APP包名</Tag>
-                <Select v-model="packageName" style="width:200px">
+                <Select v-model="packageName" style="width:200px" filterable multiple>
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
             </div>     
@@ -63,10 +68,15 @@
             </div> 
         </div>
         <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;">
+              <Tag>APP包名</Tag>
+              <Select v-model="packageName" style="width:200px">
+                    <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
               <Button type="primary" @click="timerMEM()">开始监控内存</Button>
+              <Button type="primary" @click="stopMEM()">停止监控内存</Button>
         </div>
         <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
-              <Button type="primary" @click="stopMEM()">停止监控内存</Button>
+             
         </div>
         <div class="mem" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>内存占用率趋势图</h2>
@@ -79,9 +89,11 @@
             </div>
         </div>
         <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+              <Tag>APP包名</Tag>  
+              <Select v-model="packageName" style="width:200px">
+                    <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>  
               <Button type="primary" @click="timerCPU()">开始监控CPU</Button>
-        </div>
-        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
               <Button type="primary" @click="stopCPU()">停止监控CPU</Button>
         </div>
         <div class="cpu" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
@@ -93,8 +105,7 @@
                     </section>
                 </section>
             </div>
-        </div>
-
+        </div> 
     </div>
 
 
@@ -317,7 +328,8 @@
                    this.logTag = "*:A"
                }
 
-               this.logcmd = 'adb logcat ' + this.logTag + ' -d'
+               //this.logcmd = 'adb logcat ' + this.logTag + ' -d'
+               this.logcmd = 'adb logcat ' + this.logTag + ' | grep ' + this.packageName
                console.log(this.logcmd);
                exec(this.logcmd, {
                         encoding: 'utf8',
@@ -396,5 +408,7 @@
 </script>
 
 <style scoped>
+
+#LogArea{font-size:20px; color:#0000FF;}
 
 </style>
