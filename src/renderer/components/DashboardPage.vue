@@ -67,7 +67,7 @@
                 <Button type="primary" @click="modal1 = true">准备测试</Button>
             </div> 
         </div>
-        <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;">
+        <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;"  filterable multiple>
               <Tag>APP包名</Tag>
               <Select v-model="packageName" style="width:200px">
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -75,8 +75,7 @@
               <Button type="primary" @click="timerMEM()">开始监控内存</Button>
               <Button type="primary" @click="stopMEM()">停止监控内存</Button>
         </div>
-        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
-             
+        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">    
         </div>
         <div class="mem" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>内存占用率趋势图</h2>
@@ -88,7 +87,7 @@
                 </section>
             </div>
         </div>
-        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;"  filterable multiple>
               <Tag>APP包名</Tag>  
               <Select v-model="packageName" style="width:200px">
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -105,7 +104,28 @@
                     </section>
                 </section>
             </div>
-        </div> 
+        </div>
+        <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;" filterable multiple>
+              <h1 style="margin-bottom: 20px">请在手机中开启GPU渲染模式分析</h1> 
+              <Tag>APP包名</Tag>
+              <Select v-model="packageName" style="width:200px">
+                    <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+              <Button type="primary" @click="timerFPS()">开始监控FPS</Button>
+              <Button type="primary" @click="stopFPS()">停止监控FPS</Button>
+        </div>
+   
+        <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+                          
+             <h2>FPS帧率趋势图</h2>
+             <div id="fps" style="min-width:400px;height:400px" >
+                <section class="chart-list">
+                    <section class="charts">
+                        <vue-highcharts :options="fpsareaOptions" ref="fpsareaCharts"></vue-highcharts>
+                    </section>
+                </section>
+            </div> 
+        </div>    
     </div>
 
 
@@ -134,10 +154,13 @@
                 Highcharts: Highcharts,
                 memareaOptions: dataChart.MEMData,
                 cpuareaOptions: dataChart.CPUData,
+                fpsareaOptions: dataChart.FPSData,
                 memdataList:[],
                 memtimeList:[],
                 cpudataList:[],
                 cputimeList:[],
+                fpsdataList:[],
+                fpstimeList:[],
                 message: "未查询到日志",
                 page_load: false,
                 levelList: [
@@ -257,6 +280,11 @@
                 var cpuareaCharts  = this.$refs.cpuareaCharts.chart;
                 cpuareaCharts.xAxis[0].setCategories(this.cputimeList);
                 cpuareaCharts.series[0].setData(this.cpudataList)
+            },
+            setFPSChart(searchDate) {
+                var fpsareaCharts  = this.$refs.fpsareaCharts.chart;
+                fpsareaCharts.xAxis[0].setCategories(this.fpstimeList);
+                fpsareaCharts.series[0].setData(this.fpsdataList)
             },
             goHomePage() {
                 this.$router.back('/');
@@ -400,6 +428,83 @@
                 var baseCMD = "adb shell monkey -p " + this.packageName + "--throttle " + this.throttleTime + " " + this.eventCount
                 console.log(baseCMD)
                 this.cmdstr = baseCMD
+            },
+            timerFPS(){
+                this.intervalId = setInterval(() => {
+                     this.getCurrentFPS()
+                     this.setFPSChart()
+                }, 500)
+            },
+            stopFPS(){
+                clearInterval(this.intervalId)
+            },
+            getCurrentFPS(){
+                var cmd = 'adb shell dumpsys gfxinfo com.luojilab.player | grep -A 128 \'Execute\' | grep -v \'[a-z]\''
+                // console.log(cmd)
+                exec(cmd, (err, stdout, stderr) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+                        var resultstr = stdout.replace(/\s+/g,"|");
+                        var DrawList = []
+                        var PrepareList = []
+                        var ProcessList = []
+                        var ExecuteList = []
+                        var resultList = resultstr.split("|");
+                        for (var i = resultList.length - 1; i >= 0; i=i-1) {
+                            if (resultList[i] != ""){
+                                // console.log("Draw:" + resultList[i])
+                                var Draw = parseInt(resultList[i]);
+                                DrawList.push(Draw)
+                            }
+                        }
+                        for (var i = resultList.length - 1; i >= 0; i=i-2) {
+                            if (resultList[i] != ""){
+                                // console.log("Prepare:" + resultList[i])
+                                var Prepare = parseInt(resultList[i]);
+                                PrepareList.push(Prepare)
+                            }
+                        }
+                        for (var i = resultList.length - 1; i >= 0; i=i-3) {
+                            if (resultList[i] != ""){
+                                // console.log("Process:" + resultList[i])
+                                var Process = parseInt(resultList[i]);
+                                ProcessList.push(Process)
+                            }
+                        }
+                        for (var i = resultList.length - 1; i >= 0; i=i-3) {
+                            if (resultList[i] != ""){
+                                // console.log("Execute:" + resultList[i])
+                                var Execute = parseInt(resultList[i]);
+                                ExecuteList.push(Execute)
+                            }
+                        }
+                        let json = {DrawList,PrepareList,ProcessList,ExecuteList} 
+                        //json中有任意多个数组
+                        //保存结果的数组
+                        // let result = [];  
+                        //遍历json
+                        for(let key in json){
+                            //遍历数组的每一项
+                            json[key].forEach((value,index) => {
+                                if( isBlank(this.fpsdataList[index]) ){
+                                    this.fpsdataList[index] = 0 ;
+                                }
+                                this.fpsdataList[index] += value ;  
+                                this.fpstimeList.push(this.getCurrentTime())      
+                            })      
+                        }
+                        // console.log(result);
+                        // this.fpsdataList = result
+                    
+                        //判断值是否存在函数
+                        function isBlank(val){
+                            if(val == null || val == ""){
+                                return true;
+                            }
+                        }
+                })
             }
 
 
@@ -410,5 +515,6 @@
 <style scoped>
 
 #LogArea{font-size:20px; color:#0000FF;}
+h1{color:red;}
 
 </style>

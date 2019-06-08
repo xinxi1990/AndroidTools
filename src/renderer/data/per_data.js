@@ -100,3 +100,55 @@ export const CPUData = {
     }
     ]
 }
+
+
+export const FPSData = {
+    chart: {
+        type: 'area'
+    },
+    credits: {
+        enabled:false
+    },
+    title: {
+        text: 'FPS占用率趋势图'
+    },
+    xAxis: {
+        type: "datetime",
+        categories: []
+    },
+    yAxis: {
+        title: {
+            text: 'ms'
+        },
+        labels: {
+            formatter: function () {
+                return this.value + 'ms';
+            }
+        }
+    },
+    tooltip: {
+        pointFormat: '<b>{series.name}</b>峰值<b>{point.y:,.0f}ms</b>'
+    },
+    plotOptions: {
+        // area: {
+        //     pointStart: 1940,
+        //     marker: {
+        //         enabled: false,
+        //         symbol: 'circle',
+        //         radius: 2,
+        //         states: {
+        //             hover: {
+        //                 enabled: true
+        //             }
+        //         }
+        //     }
+        // }
+    },
+    // series: []
+    series: [{
+        name: 'FPS',
+        // color: '#FF8C69',
+        data: []
+    }
+    ]
+}
