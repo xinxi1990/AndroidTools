@@ -7,7 +7,6 @@
                 <iframe :key="this.url1" v-once :src="this.url1" frameborder="0" style="width:400px;height:700px"></iframe>
             </div>
             <div style="float:left;width:50%;">
-
                 <br>
                 <Card style="width:500px">
                     <p slot="title">
@@ -18,6 +17,21 @@
                            {{ item.name }}
                         </p>
                     </div>
+                </Card>
+                <br>
+                <Card style="width:500px">
+                    <p slot="title">
+                        设备快捷
+                    </p>
+                    <div style="margin-bottom: 20px;">
+                        <Button class="audio" type="primary" @click="getScreentAudio()">视频截图</Button>
+                    </div >    
+                    <div style="margin-bottom: 20px;">
+                        <Button class="audio" type="primary" @click="getScreentAudio()">视频录制</Button>
+                    </div> 
+                    <div style="margin-bottom: 20px;">
+                        <Button class="audio" type="primary" @click="getAudioPlayer()">播放视频</Button>
+                    </div>   
                 </Card>
             </div>    
             <div style="clear:both" align="center"></div>  
@@ -130,7 +144,6 @@
               <Button type="primary" @click="timerFPS()">开始监控FPS</Button>
               <Button type="primary" @click="stopFPS()">停止监控FPS</Button>
         </div>
-   
         <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">           
              <h2>FPS帧率趋势图</h2>
              <div id="fps" style="min-width:400px;height:400px" >
@@ -145,18 +158,41 @@
             <Back-top :height="100" :bottom="200">
                 <div class="top">返回顶端</div>
             </Back-top>
-        </div>   
+        </div>
         <div>
-            <Back-top on-click="getScreentAudio">
-                <div class="audio">视频录制</div>
-            </Back-top>
-        </div>     
+            <Modal
+                v-model="modal1"
+                title="视频录制完成"
+                @on-ok="saveok"
+                @on-cancel="savecancel">
+                <p>视频录制完成,请输入保存视频路径</p>
+                <Input v-model="saveAudioPath" placeholder="请输入保存视频路径" style="width: 300px" />
+            </Modal>
+        </div> 
+        <div>
+            <Modal
+                v-model="modalplayer"
+                title="视频录制播放"
+                @on-ok="saveok"
+                @on-cancel="savecancel">
+                <p>视频录制完成,请输入保存视频路径</p>
+                <Input v-model="saveAudioPath" placeholder="请输入保存视频路径" style="width: 300px;margin-bottom: 20px;" />
+                <video-player  class="video-player vjs-custom-skin"
+                    ref="videoPlayer"
+                    :playsinline="true"
+                    :options="playerOptions"
+                ></video-player>
+            </Modal>
+        </div>             
     </div>
 
 
 </template>
 
 <script>
+
+    require('video.js/dist/video-js.css')
+    require('vue-video-player/src/custom-theme.css')
     // 导入chart组件
     import VueHighcharts from 'vue2-highcharts'
     import Highcharts from 'highcharts'
@@ -172,8 +208,33 @@
         name: "dashboardPage.vue-page",
         data () {
             return {
+                playerOptions : {
+                    playbackRates: [0.7, 1.0, 1.5, 2.0], //播放速度
+                    autoplay: false, //如果true,浏览器准备好时开始回放。
+                    muted: false, // 默认情况下将会消除任何音频。
+                    loop: false, // 导致视频一结束就重新开始。
+                    preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+                    language: 'zh-CN',
+                    aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+                    fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+                    sources: [{
+                    type: "",
+                    src: "http://static.smartisanos.cn/common/video/t1-ui.mp4" //url地址
+                    }],
+                    poster: "./android.png", //你的封面地址
+                    // width: document.documentElement.clientWidth,
+                    notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
+                    controlBar: {
+                    timeDivider: true,
+                    durationDisplay: true,
+                    remainingTimeDisplay: false,
+                    fullscreenToggle: true  //全屏按钮
+                    }
+                },
+                saveAudioPath: "",
                 cmdstr: "",
                 modal1: false,
+                modalplayer: false,
                 imagePath: '',
                 url1:'http://localhost:9002',
                 Highcharts: Highcharts,
@@ -581,6 +642,25 @@
             handleSpinRemove () {
                 this.$Spin.hide();
             },
+            setLoading(){
+                this.$Spin.show({
+                    render: (h) => {
+                        return h('div', [
+                            h('Icon', {
+                                'class': 'demo-spin-icon-load',
+                                props: {
+                                    type: 'ios-loading',
+                                    size: 18
+                                }
+                            }),
+                            h('div', 'Loading')
+                        ])
+                    }
+                });
+                setTimeout(() => {
+                        this.$Spin.hide();
+                    }, 10000);
+            },
             getCurrentDeviceName(){
                 exec('adb devices', (err, stdout, stderr) => {
                     if(err) {
@@ -683,6 +763,40 @@
             },
             getScreentAudio(){
                 console.log("getScreentAudio");
+                this.setLoading()
+                var cmd = "adb shell screenrecord  --time-limit 10 /sdcard/demo.mp4"
+                console.log(cmd);
+                exec(cmd, (err, stdout, stderr) => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+                this.getAudioModel()
+            })
+            },
+            getAudioModel(){
+                 this.modal1 = true   
+            },
+            saveok () {
+                this.saveScreentAudio()
+                this.$Message.info('点击了确定');
+
+            },
+            savecancel () {
+                this.$Message.info('点击了取消');
+            },
+            saveScreentAudio(){
+                var cmd = "adb pull /sdcard/demo.mp4 " + this.saveAudioPath
+                console.log(cmd);
+                exec(cmd, (err, stdout, stderr) => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+             })
+            },
+            getAudioPlayer(){
+                this.modalplayer = true 
             }
         }    
     }
@@ -692,13 +806,13 @@
 
 #LogArea{font-size:20px; color:#0000FF;}
 h1{color:red;}
-.audio{
-        padding: 10px;
-        background: rgba(0, 153, 229, .7);
+/* .audio{
+        padding: 30px;
+        background: rgba(229, 0, 191, 0.7);
         color: #fff;
         text-align: center;
         border-radius: 2px;
-    }
+    } */
 .top{
     padding: 10px;
     background: rgba(0, 153, 229, .7);
@@ -751,4 +865,5 @@ h1{color:red;}
    /*color: rgba(6, 6, 6, 0.38);*/
    display: inline-block;
  }
+.video-js .vjs-big-play-button{}
 </style>

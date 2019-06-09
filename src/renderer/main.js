@@ -8,12 +8,15 @@ import Routers from './router/index.js';
 //highcharts的引入
 import VueHighcharts from 'vue-highcharts';
 
+import VideoPlayer from 'vue-video-player'
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.use(iView);
 Vue.use(VueRouter);
 Vue.use(VueHighcharts);
+Vue.use(VideoPlayer)
 
 // 路由配置
 const RouterConfig = {
