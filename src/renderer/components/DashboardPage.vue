@@ -7,25 +7,41 @@
                 <iframe :key="this.url1" v-once :src="this.url1" frameborder="0" style="width:400px;height:700px"></iframe>
             </div>
             <div style="float:left;width:50%;">
-                  <h2>LOG日志</h2>
-                  <br>
-                  <div>
-                      <Tag>APP包名</Tag>
-                      <Select v-model="packageName" style="width:200px" filterable multiple>
-                           <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                      </Select>  
-                      <Tag>日志等级</Tag>
-                      <Select v-model="selectBody.loglevel" style="width:100px" placeholder="下拉筛选">
-                        <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                      </Select>
-                      <Button type="primary"  @click="timerLogCat()">打印日志</Button>
-                      <Button type="primary"  @click="stopLogCat()">停止打印</Button>
-                  </div>
-                  <div style="padding-top: 20px;">
-                      <textarea rows="20" cols="60" id="LogArea" disabled="true"></textarea>
-                  </div>
-            </div>
+
+                <br>
+                <Card style="width:500px">
+                    <p slot="title">
+                        设备信息
+                    </p>
+                    <div v-for="item in DeviceDetailList">
+                        <p style="color:#FF0000">
+                           {{ item.name }}
+                        </p>
+                    </div>
+                </Card>
+            </div>    
             <div style="clear:both" align="center"></div>  
+        
+        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
+            <h2>LOG日志</h2>
+            <br>
+            <div>
+                <Tag>APP包名</Tag>
+                <Select v-model="packageName" style="width:200px" filterable multiple>
+                    <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>  
+                <Tag>日志等级</Tag>
+                <Select v-model="selectBody.loglevel" style="width:100px" placeholder="下拉筛选">
+                <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <Button type="primary"  @click="timerLogCat()">打印日志</Button>
+                <Button type="primary"  @click="stopLogCat()">停止打印</Button>
+            </div>
+            <div style="padding-top: 20px;">
+                <textarea rows="20" cols="60" id="LogArea" disabled="true"></textarea>
+            </div>  
+        </div>    
+        
         </div>
             <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>Monkey测试</h2>
@@ -115,8 +131,7 @@
               <Button type="primary" @click="stopFPS()">停止监控FPS</Button>
         </div>
    
-        <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
-                          
+        <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">           
              <h2>FPS帧率趋势图</h2>
              <div id="fps" style="min-width:400px;height:400px" >
                 <section class="chart-list">
@@ -125,7 +140,12 @@
                     </section>
                 </section>
             </div> 
-        </div>    
+        </div> 
+        <div>
+            <Back-top :height="100" :bottom="200">
+                <div class="top">返回顶端</div>
+            </Back-top>
+        </div>       
     </div>
 
 
@@ -248,14 +268,42 @@
                 throttleTime: '',
                 eventCount:'',
                 packageName:'',
-                appList: []
-
+                appList: [],
+                deviceBody:{
+                    deviceName:'',
+                    deviceType:'',
+                    deviceSystem:'Android',
+                    deviceType:'',
+                    deviceSystem:'',
+                    deviceVerion:'',
+                    deviceStatus:'Online',
+                    deviceDisplay:'',
+                    deviceMemory:'',
+                    deviceModel:'',
+                    deviceBattery:'',
+                    deviceIP:'',
+                    deviceCPU:'',
+                    deviceMEM:''
+                },
+                DeviceDetailList:[]
             }
         },
+        beforeMount(){
+          this.handleSpinShow()      
+        },
         mounted() {
+            this.handleSpinRemove()
             // this.getScreenShow()
             this.url1 = 'http://localhost:9002'
             this.getAPPList()
+            this.getCurrentDeviceName()
+            this.getCurrentDeviceVersion()
+            this.getCurrentDeviceDisplay()
+            this.getCurrentDeviceIP()
+            this.getCurrentDeviceMEM()
+            this.getCurrentDeviceCPU()
+            this.getCurrentDeviceBattery()
+            this.getCurrentDeviceModel()
         },
         beforeDestroy () {
             clearInterval(this.intervalId)
@@ -505,10 +553,130 @@
                             }
                         }
                 })
+            },
+            handleSpinShow () {
+                    this.$Spin.show({
+                        render: (h) => {
+                            return h('div', [
+                                h('Icon', {
+                                    'class': 'demo-spin-icon-load',
+                                    props: {
+                                        type: 'ios-loading',
+                                        size: 18
+                                    }
+                                }),
+                                h('div', 'Loading')
+                            ])
+                        }
+                    });
+                    setTimeout(() => {
+                            this.$Spin.hide();
+                        }, 3000);
+            },
+            handleSpinRemove () {
+                this.$Spin.hide();
+            },
+            getCurrentDeviceName(){
+                exec('adb devices', (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    if (`${stdout}`.replace('List of devices attached','').indexOf('device') !=-1){
+                        // console.log(`stdout: ${stdout}`);
+                        // console.log(`stderr: ${stderr}`);
+                        var deviceName;
+                        var deviceNameList = stdout.replace('List of devices attached','').split('device')
+                        for (deviceName in deviceNameList){
+                            if (deviceNameList[deviceName] != "") {
+                                console.log(deviceNameList[deviceName])
+                                var name = {"name":"设备名称: " + deviceNameList[deviceName]}
+                                this.DeviceDetailList.push(name)
+                                break
+                            }
+                        }
+                    }else {
+                        this.devicesList = [{value:'未查询到设备',label:'未查询到设备'}]
+                    }
+                })
+            },
+            getCurrentDeviceVersion(){
+                    exec('adb shell getprop ro.build.version.release', (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备系统版本: " + stdout}
+                    this.DeviceDetailList.push(name)
+                })
+            },
+            getCurrentDeviceDisplay(){
+                    var cmd = "adb shell wm size | awk -F '[ ;]+' '{print $3}'"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备分辨率: " + stdout}
+                    this.DeviceDetailList.push(name)
+                })
+            },
+            getCurrentDeviceBattery(){
+                    var cmd = "adb shell dumpsys battery | grep 'level' | awk -F '[ ;]+' '{print $3}'"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备电量: " + stdout}
+                    this.DeviceDetailList.push(name)
+                })
+            },
+            getCurrentDeviceIP(){
+                    var cmd = "adb shell ifconfig wlan0 | grep 'inet addr:' | awk -F '[ ;]+' '{print $3}' | awk -F ':' '{print $2}'"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备IP地址: " + stdout}
+                    this.DeviceDetailList.push(name)
+                })
+            },
+            getCurrentDeviceCPU(){
+                    var cmd = "adb shell cat /proc/cpuinfo | grep 'Hardware' | awk -F ':' '{print $2}'"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备系统CPU: " + stdout}
+                    this.DeviceDetailList.push(name)
+            })
+            },
+            getCurrentDeviceMEM(){
+                    var cmd = "adb shell cat /proc/meminfo | grep 'MemTotal:' | awk -F ':' '{print $2}' | awk -F '[ ;]+' '{print $2}'"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备系统内存: " + stdout}
+                    this.DeviceDetailList.push(name) 
+                })
+            },
+            getCurrentDeviceModel(){
+                    var cmd = "adb shell getprop ro.product.model"
+                    exec(cmd, (err, stdout, stderr) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    var name = {"name":"设备系统型号: " + stdout}
+                    this.DeviceDetailList.push(name)  
+                })
             }
-
-
-        }
+        }    
     }
 </script>
 
@@ -516,5 +684,56 @@
 
 #LogArea{font-size:20px; color:#0000FF;}
 h1{color:red;}
+.top{
+    padding: 10px;
+    background: rgba(0, 153, 229, .7);
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+}
+.customers
+  {
+  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  width:100%;
+  border-collapse:collapse;
+  text-align:center;
+  }
+.customers td, #customers th
+  {
+  font-size:1em;
+  border:1px solid rgba(122, 122, 93, 0.34);
+  padding:3px 7px 2px 7px;
+  }
 
+ .customers th
+  {
+  font-size:1.1em;
+  padding-top:5px;
+  padding-bottom:4px;
+  background-color: rgba(109, 122, 88, 0.21);
+  color: #000000;
+  }
+
+ .customers tr.alt td
+  {
+  color:#000000;
+  background-color: rgba(0, 0, 0, 0.21);
+  font-size: 1.1em;
+  }
+ .text-style {
+   text-align: center;
+   color: #000c17;
+   font-size: 1.5em;
+ }
+ .device-text{
+   font-size: 1.1em;
+   color: #000000;
+   display: inline-block;
+   float:left;
+ }
+
+.device-resp{
+   /*color: rgba(6, 6, 6, 0.38);*/
+   display: inline-block;
+ }
 </style>
