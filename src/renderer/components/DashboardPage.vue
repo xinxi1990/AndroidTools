@@ -145,7 +145,12 @@
             <Back-top :height="100" :bottom="200">
                 <div class="top">返回顶端</div>
             </Back-top>
-        </div>       
+        </div>   
+        <div>
+            <Back-top on-click="getScreentAudio">
+                <div class="audio">视频录制</div>
+            </Back-top>
+        </div>     
     </div>
 
 
@@ -675,6 +680,9 @@
                     var name = {"name":"设备系统型号: " + stdout}
                     this.DeviceDetailList.push(name)  
                 })
+            },
+            getScreentAudio(){
+                console.log("getScreentAudio");
             }
         }    
     }
@@ -684,6 +692,13 @@
 
 #LogArea{font-size:20px; color:#0000FF;}
 h1{color:red;}
+.audio{
+        padding: 10px;
+        background: rgba(0, 153, 229, .7);
+        color: #fff;
+        text-align: center;
+        border-radius: 2px;
+    }
 .top{
     padding: 10px;
     background: rgba(0, 153, 229, .7);
