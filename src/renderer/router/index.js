@@ -13,32 +13,38 @@ const routers = [
             title: '首页'
         },
         // component: Main,
-        component: require('@/components/DashboardPage.vue').default
+        component: require('@/components/Main.vue').default
+        //component: require('@/views/AppStore.vue').default
     },
-    {
-      path: '/devices',
-      name: 'devices-page',
-      component: require('@/components/DevicesPage.vue').default
-    },
-    {
-      path: '/log',
-      name: 'log-page',
-      component: require('@/components/LogPage.vue').default
-    },
-    {
-      path: '/screen',
-      name: 'screen-page',
-      component: require('@/components/ScreenShotPage.vue').default
-    },
+    // {
+    //   path: '/devices',
+    //   name: 'devices-page',
+    //   component: require('@/components/DevicesPage.vue').default
+    // },
+    // {
+    //   path: '/log',
+    //   name: 'log-page',
+    //   component: require('@/components/LogPage.vue').default
+    // },
+    // {
+    //   path: '/screen',
+    //   name: 'screen-page',
+    //   component: require('@/components/ScreenShotPage.vue').default
+    // },
+    // {
+    //   path: '/data',
+    //   name: 'data-page',
+    //   component: require('@/components/DataPage.vue').default
+    // },
     {
       path: '/data',
       name: 'data-page',
-      component: require('@/components/DataPage.vue').default
+      component: require('@/components/DashboardPage.vue').default
     },
     {
-      path: '/show',
-      name: 'screen-show-page',
-      component: require('@/components/ScreenShowPage.vue').default
+      path: '/appstore',
+      name: 'appstore-page',
+      component: require('@/views/AppStore.vue').default
     },
 
   ];

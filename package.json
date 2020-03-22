@@ -57,6 +57,7 @@
     "element-ui": "^2.9.1",
     "highcharts": "^7.1.1",
     "iview": "^3.4.2",
+    "v-viewer": "^1.5.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-highcharts": "^0.1.0",
@@ -65,9 +66,11 @@
     "vue-websocket": "^0.2.3",
     "vue2-highcharts": "^1.2.5",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "webpack-dev-server": "^2.9.7"
   },
   "devDependencies": {
+    "electron-builder": "^22.4.1",
     "ajv": "^6.5.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
@@ -102,7 +105,6 @@
     "vue-template-compiler": "^2.5.16",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4",
     "webpack-hot-middleware": "^2.22.2",
     "webpack-merge": "^4.1.3"
   }

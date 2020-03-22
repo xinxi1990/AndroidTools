@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div><MenuTop></MenuTop></div>
         <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <div style="float:left;width:50%;">
                 <h2>实时屏幕</h2>
@@ -25,17 +26,17 @@
                     </p>
                     <div style="margin-bottom: 20px;">
                         <Button class="audio" type="primary" @click="getScreentAudio()">视频截图</Button>
-                    </div >    
+                    </div >
                     <div style="margin-bottom: 20px;">
                         <Button class="audio" type="primary" @click="getScreentAudio()">视频录制</Button>
-                    </div> 
+                    </div>
                     <div style="margin-bottom: 20px;">
                         <Button class="audio" type="primary" @click="getAudioPlayer()">播放视频</Button>
-                    </div>   
+                    </div>
                 </Card>
-            </div>    
-            <div style="clear:both" align="center"></div>  
-        
+            </div>
+            <div style="clear:both" align="center"></div>
+
         <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>LOG日志</h2>
             <br>
@@ -43,7 +44,7 @@
                 <Tag>APP包名</Tag>
                 <Select v-model="packageName" style="width:200px" filterable multiple>
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                </Select>  
+                </Select>
                 <Tag>日志等级</Tag>
                 <Select v-model="selectBody.loglevel" style="width:100px" placeholder="下拉筛选">
                 <Option v-for="item in levelList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -53,9 +54,9 @@
             </div>
             <div style="padding-top: 20px;">
                 <textarea rows="20" cols="60" id="LogArea" disabled="true"></textarea>
-            </div>  
-        </div>    
-        
+            </div>
+        </div>
+
         </div>
             <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>Monkey测试</h2>
@@ -71,22 +72,22 @@
                 <Select v-model="throttleTime" style="width:200px">
                     <Option v-for="item in throttleTimeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-            </div>      
+            </div>
             <div style="margin-bottom: 20px;margin-top:20px">
                 <Tag>事件数量</Tag>
                 <Input v-model="eventCount" placeholder="请输入事件数量" style="width: 200px" />
-            </div>    
+            </div>
             <div style="margin-bottom: 20px;margin-top:20px">
                 <Tag>APP包名</Tag>
                 <Select v-model="packageName" style="width:200px" filterable multiple>
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 </Select>
-            </div>     
+            </div>
             <div style="margin-bottom: 20px;margin-top:20px">
                 <Button type="primary" @click="setMonkyeCMD()">生成命令</Button>
                 <Input v-model="cmdstr" placeholder="生成命令" style="width: 300px;margin-left:10px" />
-            </div> 
-            <div style="margin-bottom: 20px;margin-top:20px">    
+            </div>
+            <div style="margin-bottom: 20px;margin-top:20px">
                 <Modal
                     v-model="modal1"
                     title="最终运行命令"
@@ -95,7 +96,7 @@
                     <p>{{cmdstr}}</p>
                 </Modal>
                 <Button type="primary" @click="modal1 = true">准备测试</Button>
-            </div> 
+            </div>
         </div>
         <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;"  filterable multiple>
               <Tag>APP包名</Tag>
@@ -105,7 +106,7 @@
               <Button type="primary" @click="timerMEM()">开始监控内存</Button>
               <Button type="primary" @click="stopMEM()">停止监控内存</Button>
         </div>
-        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">    
+        <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
         </div>
         <div class="mem" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
             <h2>内存占用率趋势图</h2>
@@ -118,10 +119,10 @@
             </div>
         </div>
         <div style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;"  filterable multiple>
-              <Tag>APP包名</Tag>  
+              <Tag>APP包名</Tag>
               <Select v-model="packageName" style="width:200px">
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-              </Select>  
+              </Select>
               <Button type="primary" @click="timerCPU()">开始监控CPU</Button>
               <Button type="primary" @click="stopCPU()">停止监控CPU</Button>
         </div>
@@ -136,7 +137,7 @@
             </div>
         </div>
         <div style="margin-bottom: 20px;margin-top: 40px;margin-left: 20px;" filterable multiple>
-              <h1 style="margin-bottom: 20px">请在手机中开启GPU渲染模式分析</h1> 
+              <h1 style="margin-bottom: 20px">请在手机中开启GPU渲染模式分析</h1>
               <Tag>APP包名</Tag>
               <Select v-model="packageName" style="width:200px">
                     <Option v-for="item in appList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -144,7 +145,7 @@
               <Button type="primary" @click="timerFPS()">开始监控FPS</Button>
               <Button type="primary" @click="stopFPS()">停止监控FPS</Button>
         </div>
-        <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">           
+        <div class="fps" style="margin-bottom: 20px;margin-top: 20px;margin-left: 20px;">
              <h2>FPS帧率趋势图</h2>
              <div id="fps" style="min-width:400px;height:400px" >
                 <section class="chart-list">
@@ -152,8 +153,8 @@
                         <vue-highcharts :options="fpsareaOptions" ref="fpsareaCharts"></vue-highcharts>
                     </section>
                 </section>
-            </div> 
-        </div> 
+            </div>
+        </div>
         <div>
             <Back-top :height="100" :bottom="200">
                 <div class="top">返回顶端</div>
@@ -161,14 +162,14 @@
         </div>
         <div>
             <Modal
-                v-model="modal1"
+                v-model="modal2"
                 title="视频录制完成"
                 @on-ok="saveok"
                 @on-cancel="savecancel">
                 <p>视频录制完成,请输入保存视频路径</p>
                 <Input v-model="saveAudioPath" placeholder="请输入保存视频路径" style="width: 300px" />
             </Modal>
-        </div> 
+        </div>
         <div>
             <Modal
                 v-model="modalplayer"
@@ -183,14 +184,14 @@
                     :options="playerOptions"
                 ></video-player>
             </Modal>
-        </div>             
+        </div>
     </div>
 
 
 </template>
 
 <script>
-
+    import MenuTop from '@/views/MenuTop.vue'
     require('video.js/dist/video-js.css')
     require('vue-video-player/src/custom-theme.css')
     // 导入chart组件
@@ -203,7 +204,7 @@
     import { shell } from 'electron'
     export default {
         components: {
-            VueHighcharts
+            VueHighcharts,MenuTop
         },
         name: "dashboardPage.vue-page",
         data () {
@@ -234,6 +235,7 @@
                 saveAudioPath: "",
                 cmdstr: "",
                 modal1: false,
+                modal2: false,
                 modalplayer: false,
                 imagePath: '',
                 url1:'http://localhost:9002',
@@ -355,7 +357,7 @@
             }
         },
         beforeMount(){
-          this.handleSpinShow()      
+          this.handleSpinShow()
         },
         mounted() {
             this.handleSpinRemove()
@@ -523,7 +525,7 @@
 
             },
             getAPPList(){
-                console.log("getAPPList") 
+                console.log("getAPPList")
                 exec('echo `adb shell pm list packages -3`', (err, stdout, stderr) => {
                     if(err) {
                         console.log(err);
@@ -539,7 +541,7 @@
                 });
             },
             setMonkyeCMD(){
-                var baseCMD = "adb shell monkey -p " + this.packageName + "--throttle " + this.throttleTime + " " + this.eventCount
+                var baseCMD = "adb shell monkey -p " + this.packageName + " --throttle " + this.throttleTime + " " + this.eventCount
                 console.log(baseCMD)
                 this.cmdstr = baseCMD
             },
@@ -594,10 +596,10 @@
                                 ExecuteList.push(Execute)
                             }
                         }
-                        let json = {DrawList,PrepareList,ProcessList,ExecuteList} 
+                        let json = {DrawList,PrepareList,ProcessList,ExecuteList}
                         //json中有任意多个数组
                         //保存结果的数组
-                        // let result = [];  
+                        // let result = [];
                         //遍历json
                         for(let key in json){
                             //遍历数组的每一项
@@ -605,13 +607,13 @@
                                 if( isBlank(this.fpsdataList[index]) ){
                                     this.fpsdataList[index] = 0 ;
                                 }
-                                this.fpsdataList[index] += value ;  
-                                this.fpstimeList.push(this.getCurrentTime())      
-                            })      
+                                this.fpsdataList[index] += value ;
+                                this.fpstimeList.push(this.getCurrentTime())
+                            })
                         }
                         // console.log(result);
                         // this.fpsdataList = result
-                    
+
                         //判断值是否存在函数
                         function isBlank(val){
                             if(val == null || val == ""){
@@ -747,7 +749,7 @@
                         return;
                     }
                     var name = {"name":"设备系统内存: " + stdout}
-                    this.DeviceDetailList.push(name) 
+                    this.DeviceDetailList.push(name)
                 })
             },
             getCurrentDeviceModel(){
@@ -758,7 +760,7 @@
                         return;
                     }
                     var name = {"name":"设备系统型号: " + stdout}
-                    this.DeviceDetailList.push(name)  
+                    this.DeviceDetailList.push(name)
                 })
             },
             getScreentAudio(){
@@ -775,7 +777,7 @@
             })
             },
             getAudioModel(){
-                 this.modal1 = true   
+                 this.modal1 = true
             },
             saveok () {
                 this.saveScreentAudio()
@@ -796,9 +798,9 @@
              })
             },
             getAudioPlayer(){
-                this.modalplayer = true 
+                this.modalplayer = true
             }
-        }    
+        }
     }
 </script>
 
